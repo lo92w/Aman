@@ -3,13 +3,25 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Aman (أمان) trust-layer banking prototype API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Demo authentication
+  - name: account
+    description: User account and dashboard
+  - name: beneficiaries
+    description: Saved beneficiaries
+  - name: transfers
+    description: Transfers and trust analysis
+  - name: notifications
+    description: User notifications
+  - name: security
+    description: Protection center
 paths:
   /healthz:
     get:
@@ -24,6 +36,281 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Demo login (accepts any credentials, returns the demo user)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+  /me:
+    get:
+      operationId: getMe
+      tags: [account]
+      summary: Get current demo user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [account]
+      summary: Dashboard summary (balance, protection stats, recent activity)
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+  /beneficiaries:
+    get:
+      operationId: listBeneficiaries
+      tags: [beneficiaries]
+      summary: List saved beneficiaries
+      responses:
+        "200":
+          description: Beneficiaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Beneficiary"
+    post:
+      operationId: createBeneficiary
+      tags: [beneficiaries]
+      summary: Save a new beneficiary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BeneficiaryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Beneficiary"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transfers/analyze:
+    post:
+      operationId: analyzeTransfer
+      tags: [transfers]
+      summary: Run Aman trust analysis on a draft transfer before sending
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferDraft"
+      responses:
+        "200":
+          description: Trust analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrustAnalysis"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transfers:
+    get:
+      operationId: listTransfers
+      tags: [transfers]
+      summary: List transfers, newest first
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional status filter
+      responses:
+        "200":
+          description: Transfers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transfer"
+    post:
+      operationId: createTransfer
+      tags: [transfers]
+      summary: Create a transfer (server re-runs trust analysis and routes it through the protection layers)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferInput"
+      responses:
+        "201":
+          description: Created transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transfers/{id}:
+    get:
+      operationId: getTransfer
+      tags: [transfers]
+      summary: Get transfer detail (lazily applies expiry / cooling transitions)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transfers/{id}/cancel:
+    post:
+      operationId: cancelTransfer
+      tags: [transfers]
+      summary: Cancel a pending transfer (allowed while awaiting approval or in cooling period)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Cancelled transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "400":
+          description: Cannot cancel in current status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transfers/{id}/simulate:
+    post:
+      operationId: simulateTransfer
+      tags: [transfers]
+      summary: Demo controls to simulate recipient decision or time passing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SimulationInput"
+      responses:
+        "200":
+          description: Updated transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "400":
+          description: Invalid action for current status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List notifications, newest first
+      responses:
+        "200":
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+  /notifications/read-all:
+    post:
+      operationId: markNotificationsRead
+      tags: [notifications]
+      summary: Mark all notifications as read
+      responses:
+        "200":
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationResult"
+  /security/overview:
+    get:
+      operationId: getSecurityOverview
+      tags: [security]
+      summary: Protection center data (stats, scam patterns, alerts, protection layers)
+      responses:
+        "200":
+          description: Security overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SecurityOverview"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +320,500 @@ components:
           type: string
       required:
         - status
-
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    LoginInput:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+    UserProfile:
+      type: object
+      required:
+        [
+          id,
+          fullName,
+          iban,
+          accountNumber,
+          bank,
+          balance,
+          heldAmount,
+          currency,
+        ]
+      properties:
+        id:
+          type: integer
+        fullName:
+          type: string
+        iban:
+          type: string
+        accountNumber:
+          type: string
+        bank:
+          type: string
+        balance:
+          type: number
+        heldAmount:
+          type: number
+        currency:
+          type: string
+        lastLoginAt:
+          type: ["string", "null"]
+          format: date-time
+    Beneficiary:
+      type: object
+      required: [id, name, bank, iban, transferCount, trusted]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        bank:
+          type: string
+        iban:
+          type: string
+        relationship:
+          type: ["string", "null"]
+        transferCount:
+          type: integer
+        lastTransferAt:
+          type: ["string", "null"]
+          format: date-time
+        trusted:
+          type: boolean
+    BeneficiaryInput:
+      type: object
+      required: [name, bank, iban]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        bank:
+          type: string
+          minLength: 1
+        iban:
+          type: string
+          minLength: 10
+        relationship:
+          type: string
+    TransferDraft:
+      type: object
+      required: [recipientName, recipientIban, amount]
+      properties:
+        beneficiaryId:
+          type: ["integer", "null"]
+        recipientName:
+          type: string
+          minLength: 1
+        recipientIban:
+          type: string
+          minLength: 10
+        recipientBank:
+          type: ["string", "null"]
+        amount:
+          type: number
+          minimum: 1
+        purpose:
+          type: ["string", "null"]
+    TrustFactor:
+      type: object
+      required: [id, label, detail, impact, kind]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        detail:
+          type: string
+        impact:
+          type: number
+        kind:
+          type: string
+          enum: [positive, negative, neutral]
+    SocialCheckQuestion:
+      type: object
+      required: [id, question, redFlag]
+      properties:
+        id:
+          type: string
+        question:
+          type: string
+        redFlag:
+          type: boolean
+    ScamPattern:
+      type: object
+      required: [id, name, description, severity]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+    NetworkInsight:
+      type: object
+      required: [inflows48h, uniqueSenders, avgHoldMinutes, outflowRatio, summary]
+      properties:
+        inflows48h:
+          type: integer
+        uniqueSenders:
+          type: integer
+        avgHoldMinutes:
+          type: number
+        outflowRatio:
+          type: number
+        summary:
+          type: string
+    RecipientPreview:
+      type: object
+      required: [holderNameMasked, bank, isNewRecipient, nameVerified]
+      properties:
+        holderNameMasked:
+          type: string
+        bank:
+          type: string
+        accountAgeMonths:
+          type: ["integer", "null"]
+        isNewRecipient:
+          type: boolean
+        nameVerified:
+          type: boolean
+    TrustAnalysis:
+      type: object
+      required:
+        [
+          score,
+          riskLevel,
+          requiredAction,
+          headline,
+          summary,
+          factors,
+          detectedPatterns,
+          socialCheck,
+          recipientPreview,
+          communityReports,
+        ]
+      properties:
+        score:
+          type: integer
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        requiredAction:
+          type: string
+          enum: [proceed, social_check, recipient_approval, block]
+        headline:
+          type: string
+        summary:
+          type: string
+        factors:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrustFactor"
+        detectedPatterns:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScamPattern"
+        socialCheck:
+          type: array
+          items:
+            $ref: "#/components/schemas/SocialCheckQuestion"
+        networkInsight:
+          oneOf:
+            - $ref: "#/components/schemas/NetworkInsight"
+            - type: "null"
+        recipientPreview:
+          $ref: "#/components/schemas/RecipientPreview"
+        communityReports:
+          type: integer
+    SocialAnswer:
+      type: object
+      required: [questionId, answer]
+      properties:
+        questionId:
+          type: string
+        answer:
+          type: boolean
+    TransferInput:
+      type: object
+      required: [recipientName, recipientIban, amount]
+      properties:
+        beneficiaryId:
+          type: ["integer", "null"]
+        recipientName:
+          type: string
+          minLength: 1
+        recipientIban:
+          type: string
+          minLength: 10
+        recipientBank:
+          type: ["string", "null"]
+        amount:
+          type: number
+          minimum: 1
+        purpose:
+          type: ["string", "null"]
+        socialAnswers:
+          type: array
+          items:
+            $ref: "#/components/schemas/SocialAnswer"
+        overrideAcknowledged:
+          type: boolean
+    TransferTimelineEvent:
+      type: object
+      required: [at, type, label]
+      properties:
+        at:
+          type: string
+          format: date-time
+        type:
+          type: string
+        label:
+          type: string
+        detail:
+          type: ["string", "null"]
+    Transfer:
+      type: object
+      required:
+        [
+          id,
+          reference,
+          recipientName,
+          recipientIban,
+          recipientBank,
+          amount,
+          status,
+          trustScore,
+          riskLevel,
+          factors,
+          timeline,
+          createdAt,
+        ]
+      properties:
+        id:
+          type: integer
+        reference:
+          type: string
+        recipientName:
+          type: string
+        recipientIban:
+          type: string
+        recipientBank:
+          type: string
+        amount:
+          type: number
+        purpose:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum:
+            [
+              awaiting_recipient_approval,
+              in_cooling_period,
+              completed,
+              cancelled,
+              rejected_by_recipient,
+              expired,
+              blocked,
+            ]
+        trustScore:
+          type: integer
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        factors:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrustFactor"
+        timeline:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransferTimelineEvent"
+        approvalDeadline:
+          type: ["string", "null"]
+          format: date-time
+        coolingEndsAt:
+          type: ["string", "null"]
+          format: date-time
+        completedAt:
+          type: ["string", "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+    SimulationInput:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          enum: [recipient_approve, recipient_reject, skip_cooling, expire_now]
+    Notification:
+      type: object
+      required: [id, type, title, body, read, createdAt]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [trust, success, pending, cancel, security]
+        title:
+          type: string
+        body:
+          type: string
+        read:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    OperationResult:
+      type: object
+      required: [success, updated]
+      properties:
+        success:
+          type: boolean
+        updated:
+          type: integer
+    ProtectionStats:
+      type: object
+      required:
+        [
+          analyzedCount,
+          flaggedCount,
+          blockedCount,
+          protectedAmount,
+          communityReports,
+          activeScamAccounts,
+        ]
+      properties:
+        analyzedCount:
+          type: integer
+        flaggedCount:
+          type: integer
+        blockedCount:
+          type: integer
+        protectedAmount:
+          type: number
+        communityReports:
+          type: integer
+        activeScamAccounts:
+          type: integer
+    MonthlyStats:
+      type: object
+      required:
+        [month, transferredAmount, transferCount, safeCount, flaggedCount, blockedCount]
+      properties:
+        month:
+          type: string
+        transferredAmount:
+          type: number
+        transferCount:
+          type: integer
+        safeCount:
+          type: integer
+        flaggedCount:
+          type: integer
+        blockedCount:
+          type: integer
+    DashboardSummary:
+      type: object
+      required: [user, protection, monthly, recentTransfers, unreadNotifications]
+      properties:
+        user:
+          $ref: "#/components/schemas/UserProfile"
+        protection:
+          $ref: "#/components/schemas/ProtectionStats"
+        monthly:
+          $ref: "#/components/schemas/MonthlyStats"
+        recentTransfers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Transfer"
+        unreadNotifications:
+          type: integer
+    ScamPatternStat:
+      type: object
+      required: [id, name, description, sharePercent, trend]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sharePercent:
+          type: number
+        trend:
+          type: string
+          enum: [up, down, flat]
+    SecurityAlert:
+      type: object
+      required: [id, title, detail, severity, time]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        detail:
+          type: string
+        severity:
+          type: string
+          enum: [info, warning, critical]
+        time:
+          type: string
+    ProtectionLayer:
+      type: object
+      required: [id, order, name, description]
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+    SecurityTip:
+      type: object
+      required: [id, title, body]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+    SecurityOverview:
+      type: object
+      required: [stats, patterns, recentAlerts, layers, tips]
+      properties:
+        stats:
+          $ref: "#/components/schemas/ProtectionStats"
+        patterns:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScamPatternStat"
+        recentAlerts:
+          type: array
+          items:
+            $ref: "#/components/schemas/SecurityAlert"
+        layers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProtectionLayer"
+        tips:
+          type: array
+          items:
+            $ref: "#/components/schemas/SecurityTip"

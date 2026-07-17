@@ -1,0 +1,1 @@
+- [Protection-center design](protection-center.md) — keep it a personal bank-style security view; avoid network-intelligence dashboards that feel like an admin/ops tool instead of a user-facing bank screen.
