@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #02141E;
+  --color-brand-primary-light: #002134;
+  --color-brand-secondary: #837FD8;
+  --color-brand-cream: #FDF8F5;
+  --color-brand-salmon: #CD907E;
+  
+  --color-background: var(--color-brand-primary);
+  --color-foreground: var(--color-brand-cream);
+
+  --font-display: 'Tajawal', sans-serif;
+  --font-body: 'IBM Plex Sans Arabic', sans-serif;
+}
+
+:root {
+  --brand-primary: #02141E;
+  --brand-primary-light: #002134;
+  --brand-secondary: #837FD8;
+  --brand-cream: #FDF8F5;
+  --brand-salmon: #CD907E;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--brand-primary);
+  color: var(--brand-cream);
+  overflow: hidden;
+  font-family: var(--font-body);
+}
+
+.text-gradient {
+  background: linear-gradient(to right, var(--brand-secondary), var(--brand-salmon));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-tech {
+  background: radial-gradient(circle at center, var(--brand-primary-light) 0%, var(--brand-primary) 100%);
+}
+
+.glow-salmon {
+  box-shadow: 0 0 40px rgba(205, 144, 126, 0.4);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 40px rgba(131, 127, 216, 0.4);
+}
+
+/* Base utility classes for motion design */
+.will-change-transform {
+  will-change: transform, opacity;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.clip-path-reveal {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}

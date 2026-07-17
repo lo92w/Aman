@@ -18,3 +18,9 @@ id = "U5muHMBwxma4Mx1o3Fxu3"
 uri = "file://.local/outputs/Trustflow---------------26-----------------.pptx"
 type = "slides"
 title = "Trustflow - الياس المهداوي (PPTX)"
+
+[[outputs]]
+id = "Vq-IL5TotId7Rb0hqKv_n"
+uri = "file://artifacts/aman-pitch-video/public/audio/bg_music.mp3"
+type = "audio"
+title = "Aman pitch background music"

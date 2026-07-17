@@ -1,0 +1,27 @@
+kind = "video"
+previewPath = "/aman-pitch-video/"
+title = "أمان — فيديو Pitch هاكاثون امد 26"
+version = "1.0.0"
+id = "artifacts/aman-pitch-video"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/aman-pitch-video/" ]
+localPort = 21581
+
+[services.development]
+run = "pnpm --filter @workspace/aman-pitch-video run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/aman-pitch-video", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/aman-pitch-video/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21581"
+BASE_PATH = "/aman-pitch-video/"
