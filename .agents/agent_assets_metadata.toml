@@ -12,3 +12,9 @@ id = "mNd2DC0C52y06uZVqHHYF"
 uri = "file://.local/outputs/Trustflow---------------26.pptx"
 type = "slides"
 title = "Trustflow - التشريعات المالية (PPTX)"
+
+[[outputs]]
+id = "U5muHMBwxma4Mx1o3Fxu3"
+uri = "file://.local/outputs/Trustflow---------------26-----------------.pptx"
+type = "slides"
+title = "Trustflow - الياس المهداوي (PPTX)"
