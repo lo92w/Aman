@@ -32,7 +32,7 @@ const Slide1: React.FC = () => {
           boxSizing: "border-box", backgroundColor: "transparent", padding: "80.3px 80.3px 80.3px 80.3px", wordWrap: "break-word"
         }}>
           <p style={{ textAlign: "right", lineHeight: "1.2", fontSize: "calc(252.13pt * var(--pptx-font-scale, 1))", marginTop: "0", marginBottom: "0" }}>
-            <span style={{ fontSize: "calc(252.13pt * var(--pptx-font-scale, 1))", fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", color: "#ffffff" }}>{"فريق أمان"}</span>
+            <span style={{ fontSize: "calc(252.13pt * var(--pptx-font-scale, 1))", fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", color: "#ffffff" }}>{"Trustflow"}</span>
           </p>
         </div>
         {/* Track */}
@@ -42,7 +42,7 @@ const Slide1: React.FC = () => {
           ["--pptx-font-scale" as string]: "0.9", wordWrap: "break-word"
         }}>
           <p style={{ textAlign: "right", lineHeight: "1.2", fontSize: "calc(127.16pt * var(--pptx-font-scale, 1))", marginTop: "0", marginBottom: "0" }}>
-            <span style={{ fontSize: "calc(127.16pt * var(--pptx-font-scale, 1))", fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", color: "#C36C4F" }}>{"الأمن المالي الرقمي — FinTech"}</span>
+            <span style={{ fontSize: "calc(127.16pt * var(--pptx-font-scale, 1))", fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", color: "#C36C4F" }}>{"التشريعات المالية — RegTech"}</span>
           </p>
         </div>
         {/* Logos */}

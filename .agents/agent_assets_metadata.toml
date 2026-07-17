@@ -6,3 +6,9 @@ id = "7rg8B0iOz_KbvVsORNrt9"
 uri = "file://.local/outputs/-------------------26.pptx"
 type = "slides"
 title = "أمان — هاكاثون امد 26 (PPTX)"
+
+[[outputs]]
+id = "mNd2DC0C52y06uZVqHHYF"
+uri = "file://.local/outputs/Trustflow---------------26.pptx"
+type = "slides"
+title = "Trustflow - التشريعات المالية (PPTX)"
