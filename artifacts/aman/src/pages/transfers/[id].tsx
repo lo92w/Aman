@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { AppLayout } from "@/components/layout/app-layout";
 import { 
   useGetTransfer, 
@@ -12,11 +13,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate, formatTime } from "@/lib/utils";
 import { useRoute, Link } from "wouter";
 import { StatusBadge } from "@/pages/dashboard";
-import { ShieldCheck, Clock, AlertTriangle, CheckCircle2, XCircle, ArrowRight, Ban, Info, ShieldAlert, Activity, Eye } from "lucide-react";
+import { ShieldCheck, Clock, CheckCircle2, XCircle, Ban, Info, ShieldAlert, Activity, Eye, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TransferDetail() {
@@ -24,6 +24,7 @@ export default function TransferDetail() {
   const id = parseInt(params?.id || "0", 10);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [demoOpen, setDemoOpen] = useState(false);
 
   const { data: transfer, isLoading } = useGetTransfer(id, {
     query: {
@@ -169,7 +170,7 @@ export default function TransferDetail() {
 
             {/* Link to recipient view — demo only */}
             {transfer.status === 'awaiting_recipient_approval' && (
-              <Link href="/recipient-view">
+              <Link href={`/recipient-view?id=${transfer.id}`}>
                 <div className="mt-3 flex items-center justify-center gap-2 p-3 bg-white/60 rounded-xl border border-orange-200 text-orange-800 text-sm font-bold cursor-pointer hover:bg-white/80 transition-colors">
                   <Eye className="w-4 h-4" />
                   شاهد ما يراه المستلم الآن
@@ -201,42 +202,43 @@ export default function TransferDetail() {
           </div>
         </div>
 
-        {/* HACKATHON DEMO PANEL */}
-        <div className="mt-12 bg-secondary/10 border-2 border-secondary/20 rounded-3xl p-5 relative overflow-hidden border-dashed">
-          <div className="absolute -right-6 -top-6 w-24 h-24 bg-secondary/20 rounded-full blur-xl" />
-          <h3 className="font-display font-bold text-secondary-foreground mb-4 flex items-center gap-2 relative z-10">
-            <Activity className="w-5 h-5" />
-            وضع العرض التقديمي (Demo)
-          </h3>
-          <p className="text-xs text-muted-foreground mb-4 relative z-10">
-            أدوات لمحاكاة مرور الوقت أو استجابة المستلم لتسريع العرض.
-          </p>
-          <div className="grid grid-cols-2 gap-2 relative z-10">
-            {transfer.status === 'awaiting_recipient_approval' && (
-              <>
-                <Button size="sm" variant="outline" className="text-xs" onClick={() => simulate('recipient_approve')}>
-                  محاكاة: قبول المستلم
-                </Button>
-                <Button size="sm" variant="outline" className="text-xs" onClick={() => simulate('recipient_reject')}>
-                  محاكاة: رفض المستلم
-                </Button>
-                <Button size="sm" variant="outline" className="text-xs col-span-2" onClick={() => simulate('expire_now')}>
-                  تسريع الوقت: انتهاء المهلة
-                </Button>
-              </>
-            )}
-            {transfer.status === 'in_cooling_period' && (
-              <Button size="sm" variant="outline" className="text-xs col-span-2" onClick={() => simulate('skip_cooling')}>
-                تسريع الوقت: تخطي التهدئة
-              </Button>
-            )}
-            {!isPending && (
-              <div className="col-span-2 text-center text-xs text-muted-foreground py-2">
-                لا توجد إجراءات محاكاة متاحة لهذه الحالة
+        {/* DEMO PANEL — collapsible */}
+        {isPending && (
+          <div className="border border-dashed border-border/60 rounded-2xl overflow-hidden">
+            <button
+              onClick={() => setDemoOpen(o => !o)}
+              className="w-full flex items-center justify-between px-4 py-3 text-muted-foreground hover:bg-muted/50 transition-colors"
+            >
+              <span className="flex items-center gap-2 text-xs font-medium">
+                <Activity className="w-3.5 h-3.5" />
+                أدوات المحاكاة
+              </span>
+              <ChevronDown className={cn("w-4 h-4 transition-transform", demoOpen && "rotate-180")} />
+            </button>
+            {demoOpen && (
+              <div className="px-4 pb-4 grid grid-cols-2 gap-2">
+                {transfer.status === 'awaiting_recipient_approval' && (
+                  <>
+                    <Button size="sm" variant="outline" className="text-xs" onClick={() => simulate('recipient_approve')}>
+                      قبول المستلم
+                    </Button>
+                    <Button size="sm" variant="outline" className="text-xs" onClick={() => simulate('recipient_reject')}>
+                      رفض المستلم
+                    </Button>
+                    <Button size="sm" variant="outline" className="text-xs col-span-2" onClick={() => simulate('expire_now')}>
+                      انتهاء المهلة
+                    </Button>
+                  </>
+                )}
+                {transfer.status === 'in_cooling_period' && (
+                  <Button size="sm" variant="outline" className="text-xs col-span-2" onClick={() => simulate('skip_cooling')}>
+                    تخطي التهدئة
+                  </Button>
+                )}
               </div>
             )}
           </div>
-        </div>
+        )}
 
       </div>
     </AppLayout>

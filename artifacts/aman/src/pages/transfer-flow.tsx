@@ -165,26 +165,7 @@ export default function TransferFlow() {
           <div className="p-6 pb-24">
 
             {/* ── Analysis animation ── */}
-            {step === "analysis" && (
-              <div className="flex flex-col items-center justify-center py-16 space-y-8 text-center">
-                <div className="relative w-36 h-36 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-secondary/20 rounded-full animate-ping" />
-                  <div className="absolute inset-6 bg-secondary/30 rounded-full animate-pulse" />
-                  <div className="relative z-10 w-20 h-20 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-2xl">
-                    <BrainCircuit className="w-10 h-10 animate-bounce" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h2 className="font-display text-2xl font-bold">أمان يفحص الحوالة</h2>
-                  <p className="text-muted-foreground text-sm animate-pulse">
-                    نحلل سجل الشبكة ونطابق بيانات المستلم...
-                  </p>
-                </div>
-                <div className="w-56 bg-muted rounded-full h-1.5 overflow-hidden">
-                  <div className="bg-primary h-full rounded-full animate-[progress_2.2s_ease-in-out_forwards]" style={{ width: "100%" }} />
-                </div>
-              </div>
-            )}
+            {step === "analysis" && <AnalysisScreen />}
 
             {/* ── Social check ── */}
             {step === "social_check" && analysis && (
@@ -653,6 +634,102 @@ export default function TransferFlow() {
           )}
         </div>
       </main>
+    </div>
+  );
+}
+
+/* ─── Analysis screen component ─── */
+const PHASES = [
+  "يتحقق من هوية المستلم...",
+  "يفحص سجل الشبكة...",
+  "يطابق نماذج الاحتيال...",
+  "يحلل سلوك الحساب...",
+  "يحسب درجة الثقة النهائية...",
+];
+
+function AnalysisScreen() {
+  const [phaseIdx, setPhaseIdx] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setPhaseIdx((i) => (i + 1) % PHASES.length), 440);
+    return () => clearInterval(t);
+  }, []);
+
+  // Data dots positions on a circle
+  const dots = [0, 72, 144, 216, 288].map((deg) => ({
+    x: 50 + 38 * Math.sin((deg * Math.PI) / 180),
+    y: 50 - 38 * Math.cos((deg * Math.PI) / 180),
+  }));
+
+  return (
+    <div className="flex flex-col items-center justify-center py-10 space-y-10 text-center">
+
+      {/* Scanner visualization */}
+      <div className="relative w-56 h-56 flex items-center justify-center">
+
+        {/* Outermost slow-pulse ring */}
+        <div className="absolute inset-0 rounded-full border border-primary/10 animate-pulse" />
+
+        {/* Slow-rotating dashed ring */}
+        <div
+          className="absolute inset-4 rounded-full border-2 border-dashed border-primary/15 animate-spin"
+          style={{ animationDuration: "10s" }}
+        />
+
+        {/* Static track ring */}
+        <div className="absolute inset-10 rounded-full border-2 border-primary/10" />
+
+        {/* Fast rotating scanner arc */}
+        <div
+          className="absolute inset-10 rounded-full border-[3px] border-transparent border-t-secondary border-r-secondary/40 animate-spin"
+          style={{ animationDuration: "1s" }}
+        />
+
+        {/* Data dots orbiting the track */}
+        {dots.map((dot, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 rounded-full bg-secondary/60"
+            style={{
+              left: `${dot.x}%`,
+              top: `${dot.y}%`,
+              transform: "translate(-50%, -50%)",
+              opacity: 0.4 + 0.6 * ((phaseIdx + i) % 5) / 4,
+              transition: "opacity 0.4s ease",
+            }}
+          />
+        ))}
+
+        {/* Center glow */}
+        <div className="absolute inset-[28%] rounded-full bg-primary/8 blur-md" />
+
+        {/* Center shield */}
+        <div className="relative z-10 w-20 h-20 bg-primary rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/50">
+          <ShieldCheck className="w-10 h-10 text-secondary" />
+        </div>
+      </div>
+
+      {/* Text */}
+      <div className="space-y-3">
+        <h2 className="font-display text-2xl font-bold">أمان يفحص الحوالة</h2>
+        <p className="text-muted-foreground text-sm h-5 transition-all duration-300">
+          {PHASES[phaseIdx]}
+        </p>
+      </div>
+
+      {/* Progress */}
+      <div className="w-64 space-y-2">
+        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-l from-secondary to-primary/80"
+            style={{ animation: "progress 2.2s ease-out forwards" }}
+          />
+        </div>
+        <div className="flex justify-between text-[10px] text-muted-foreground/60 font-medium px-0.5">
+          <span>تحليل البيانات</span>
+          <span>محرك أمان الذكي</span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -31,8 +31,6 @@ const SCENARIOS = [
     sublabel: "درجة ثقة ≥ 75",
     iban: "SA0310000002210011870025",
     name: "سارة القحطاني",
-    color: "bg-green-50 border-green-200 text-green-800",
-    dot: "bg-green-500",
   },
   {
     id: "social",
@@ -41,18 +39,14 @@ const SCENARIOS = [
     sublabel: "درجة ثقة 45–74",
     iban: "SA5540000001229077430031",
     name: "بدر الشهراني",
-    color: "bg-orange-50 border-orange-200 text-orange-800",
-    dot: "bg-orange-400",
   },
   {
     id: "approval",
     emoji: "🔐",
     label: "موافقة المستلم",
-    sublabel: "حساب مشبوه (مؤشر 40)",
+    sublabel: "مؤشر ثقة 40",
     iban: "SA3960000333221100998877",
     name: "حساب تجاري",
-    color: "bg-red-50 border-red-200 text-red-800",
-    dot: "bg-red-400",
   },
   {
     id: "block",
@@ -61,8 +55,6 @@ const SCENARIOS = [
     sublabel: "شبكة احتيال نشطة",
     iban: "SA7115000999887766554433",
     name: "مؤسسة مشبوهة",
-    color: "bg-slate-100 border-slate-300 text-slate-700",
-    dot: "bg-slate-500",
   },
 ] as const;
 
@@ -72,6 +64,7 @@ export default function Dashboard() {
   const { toast } = useToast();
   const [hideBalance, setHideBalance] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showDemo, setShowDemo] = useState(false);
 
   const copyIban = (iban: string, id: string) => {
     navigator.clipboard.writeText(iban);
@@ -184,48 +177,67 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* ── Demo scenarios card ── */}
-        <div className="bg-gradient-to-br from-primary/95 to-primary rounded-3xl p-5 relative overflow-hidden shadow-xl">
-          <div className="absolute -top-6 -left-6 w-28 h-28 bg-secondary/20 rounded-full blur-2xl" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-xl bg-secondary/20 flex items-center justify-center">
-                <Users className="w-4 h-4 text-secondary" />
+        {/* ── Demo overlay trigger ── */}
+        {showDemo && (
+          <div
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex flex-col justify-end"
+            onClick={() => setShowDemo(false)}
+          >
+            <div
+              className="bg-card rounded-t-3xl p-6 pb-10 max-w-md mx-auto w-full shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-10 h-1 bg-muted rounded-full mx-auto mb-5" />
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Users className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm">حسابات الاختبار</h3>
+                  <p className="text-muted-foreground text-[10px]">انسخ الآيبان ← تحويل جديد ← الصقه</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-display font-bold text-white text-sm">سيناريوهات العرض التجريبي</h3>
-                <p className="text-white/50 text-[10px]">انسخ الآيبان وجرّب تحويلًا جديدًا</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {SCENARIOS.map((sc) => (
-                <button
-                  key={sc.id}
-                  onClick={() => copyIban(sc.iban, sc.id)}
-                  className="bg-white/8 border border-white/15 rounded-2xl p-3 text-right hover:bg-white/15 active:scale-95 transition-all group"
-                >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-base">{sc.emoji}</span>
+              <div className="space-y-2">
+                {SCENARIOS.map((sc) => (
+                  <button
+                    key={sc.id}
+                    onClick={() => copyIban(sc.iban, sc.id)}
+                    className="w-full flex items-center justify-between p-4 bg-muted/50 border border-border/50 rounded-2xl hover:bg-muted active:scale-[0.98] transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">{sc.emoji}</span>
+                      <div className="text-right">
+                        <p className="font-bold text-sm">{sc.label}</p>
+                        <p className="text-muted-foreground text-[11px]">{sc.sublabel}</p>
+                      </div>
+                    </div>
                     <div className={cn(
-                      "w-5 h-5 rounded-full flex items-center justify-center transition-all",
-                      copiedId === sc.id ? "bg-green-500/20" : "bg-white/10"
+                      "w-8 h-8 rounded-full flex items-center justify-center transition-all shrink-0",
+                      copiedId === sc.id ? "bg-green-100 text-green-600" : "bg-card text-muted-foreground border border-border/50 group-hover:border-primary/30"
                     )}>
                       {copiedId === sc.id
-                        ? <CheckCheck className="w-3 h-3 text-green-400" />
-                        : <Copy className="w-3 h-3 text-white/50 group-hover:text-white/80" />
+                        ? <CheckCheck className="w-4 h-4" />
+                        : <Copy className="w-4 h-4" />
                       }
                     </div>
-                  </div>
-                  <p className="font-bold text-white text-xs leading-snug">{sc.label}</p>
-                  <p className="text-white/50 text-[10px] mt-0.5">{sc.sublabel}</p>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
-            <p className="text-white/40 text-[10px] mt-3 text-center">
-              انسخ الآيبان ← تحويل جديد ← الصقه في الخانة
-            </p>
           </div>
-        </div>
+        )}
+
+        {/* ── Demo trigger pill ── */}
+        <button
+          onClick={() => setShowDemo(true)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-muted/40 border border-dashed border-border/60 rounded-2xl text-muted-foreground hover:bg-muted/70 hover:text-foreground transition-all group"
+        >
+          <span className="flex items-center gap-2 text-xs font-medium">
+            <span className="text-sm">🎬</span>
+            سيناريوهات العرض التجريبي
+          </span>
+          <ChevronLeft className="w-4 h-4 rotate-180 group-hover:translate-x-0.5 transition-transform" />
+        </button>
 
         {/* ── Recent transfers ── */}
         <div>
