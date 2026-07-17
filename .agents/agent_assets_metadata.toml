@@ -24,3 +24,9 @@ id = "Vq-IL5TotId7Rb0hqKv_n"
 uri = "file://artifacts/aman-pitch-video/public/audio/bg_music.mp3"
 type = "audio"
 title = "Aman pitch background music"
+
+[[outputs]]
+id = "NMTXlTtFybx7VNNiqRhch"
+uri = "file://aman-website.zip"
+type = "unspecified"
+title = "موقع أمان — جاهز للتحميل"
