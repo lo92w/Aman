@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://488223ca-6af7-46be-9b55-9782ba624244-00-dtvjb9ziwhm8.pike.replit.dev/">🌐 التطبيق المباشر</a> &nbsp;|&nbsp;
   <a href="https://488223ca-6af7-46be-9b55-9782ba624244-00-dtvjb9ziwhm8.pike.replit.dev/aman-pitch-video/">🎬 فيديو العرض</a> &nbsp;|&nbsp;
-  <a href="https://488223ca-6af7-46be-9b55-9782ba624244-00-dtvjb9ziwhm8.pike.replit.dev/aman-slides/">📊 شرائح العرض</a>
+  <a href="https://docs.google.com/presentation/d/1sroMObPbDrr1YWGrOgQZ0fX1b30Sbairge4i_lrsgHA/edit?usp=drivesdk">📊 شرائح العرض</a>
 </p>
 
 ---
