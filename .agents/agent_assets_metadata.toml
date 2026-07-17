@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "7rg8B0iOz_KbvVsORNrt9"
+uri = "file://.local/outputs/-------------------26.pptx"
+type = "slides"
+title = "أمان — هاكاثون امد 26 (PPTX)"
