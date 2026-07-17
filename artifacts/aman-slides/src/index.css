@@ -1,45 +1,45 @@
 @import 'tailwindcss';
 
 @theme inline {
-  --color-primary: var(--slide-primary);
-  --color-accent: var(--slide-accent);
-  --color-bg: var(--slide-bg);
-  --color-text: var(--slide-text);
-  --color-muted: var(--slide-muted);
-  --font-display: var(--font-display-family);
-  --font-body: var(--font-body-family);
+  --color-primary: #C36C4F;
+  --color-primary-dark: #A0523D;
+  --color-accent: #A99FE3;
+  --color-bg: #212145;
+  --color-bg-light: #26264E;
+  --color-bg-card: #2D2A54;
+  --color-text: #FFFFFF;
+  --color-text-muted: #CBD5E1;
+  --color-text-subtle: #94A3B8;
+  --color-green: #93C47D;
+  --color-yellow: #FFD966;
+  --font-display: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
+  --font-body: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+  --font-icon: 'Material Icons', sans-serif;
 }
 
 :root {
-  --slide-primary: #C36C4F;
-  --slide-accent: #A99FE3;
-  --slide-bg: #212145;
-  --slide-text: #ffffff;
-  --slide-muted: #CBD5E1;
-  --font-display-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
-  --font-body-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
   color-scheme: dark;
+  background: #212145;
+  color: #FFFFFF;
+  font-family: var(--font-body);
 }
 
-html,
-body,
-#root {
+html, body, #root {
   width: 100%;
   height: 100%;
   margin: 0;
   direction: rtl;
 }
 
-body {
-  background: var(--slide-bg);
-  color: var(--slide-text);
-  font-family: var(--font-body-family);
-}
-
 .slide {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
+  position: relative;
+  background-color: #212145;
+  color: #FFFFFF;
+  direction: rtl;
+  text-align: right;
 }
 
 .slide-viewer {
@@ -51,4 +51,6 @@ body {
 .material-icons {
   font-family: 'Material Icons';
   font-style: normal;
+  font-weight: normal;
+  font-display: block;
 }
