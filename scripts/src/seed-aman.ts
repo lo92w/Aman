@@ -29,7 +29,7 @@ async function main() {
   // المستخدم التجريبي
   // ═══════════════════════════════════════════════════════════
   await db.insert(usersTable).values({
-    fullName: "أحمد العتيبي",
+    fullName: "أليانا الشريف",
     iban: "SA0305000068201621404471",
     accountNumber: "68201621404471",
     bank: "مصرف الإنماء",

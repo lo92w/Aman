@@ -61,7 +61,7 @@ export default function RecipientView() {
   };
 
   // Derive display values from real transfer or fallback
-  const senderName = "أحمد العتيبي";
+  const senderName = "أليانا الشريف";
   const senderBank = "مصرف الإنماء";
   const amount = transfer?.amount ?? 6000;
   const purpose = transfer?.purpose ?? "تحويل شخصي";
