@@ -46,7 +46,7 @@ async function main() {
     // ── جهات موثوقة ──
     {
       userId: 1,
-      name: "سارة القحطاني",
+      name: "نوف العنزي",
       bank: "البنك الأهلي السعودي",
       iban: "SA0310000002210011870025",
       relationship: "صديقة مقربة",
@@ -56,7 +56,7 @@ async function main() {
     },
     {
       userId: 1,
-      name: "منصور الدوسري",
+      name: "ملك العتيبي",
       bank: "بنك الرياض",
       iban: "SA7120000009050044320018",
       relationship: "صديق",
